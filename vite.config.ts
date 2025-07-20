@@ -1,40 +1,49 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
-import { fileURLToPath } from "url";
-import dotenv from 'dotenv'
-dotenv.config()
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
+import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig(async () => ({
+export default defineConfig({
   plugins: [
     react(),
     runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-        ? [
-          (await import("@replit/vite-plugin-cartographer")).cartographer(),
-        ]
-        : []),
+    // Removed conditional cartographer plugin for simplicity
   ],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "client", "src"),
-      "@shared": path.resolve(__dirname, "shared"),
+    alias: [
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, 'client/src'),
+      },
+      {
+        find: '@shared',
+        replacement: path.resolve(__dirname, 'shared'),
+      },
+    ],
+  },
+  root: path.resolve(__dirname, 'client'),
+  server: {
+    port: 5173,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+    fs: {
+      allow: [
+        path.resolve(__dirname, 'client'),
+        path.resolve(__dirname, 'shared'),
+      ],
     },
   },
-  root: path.resolve(__dirname, "client"),
   build: {
-    outDir: path.resolve(__dirname, "dist/public"),
+    outDir: path.resolve(__dirname, 'dist/public'),
     emptyOutDir: true,
   },
-  server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
-  },
-}));
+});

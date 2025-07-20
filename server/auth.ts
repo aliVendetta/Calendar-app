@@ -30,11 +30,20 @@ async function comparePasswords(supplied: string, stored: string) {
 
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET || 'fallback_secret_but_not_recommended',
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      httpOnly: true,
+    },
     store: storage.sessionStore,
   };
+
+  if (!process.env.SESSION_SECRET) {
+    console.warn('Warning: SESSION_SECRET is not set in environment variables');
+  }
 
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
@@ -75,8 +84,21 @@ export function setupAuth(app: Express) {
     });
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+  // app.post("/api/login", passport.authenticate("local"), (req, res) => {
+  //   res.status(200).json(req.user);
+  // });
+
+  app.post('/api/login', (req, res, next) => {
+    passport.authenticate('local', (err, user) => {
+      if (err) return next(err);
+      if (!user)
+        return res.status(401).json({ message: 'Invalid credentials' });
+
+      req.login(user, (err) => {
+        if (err) return next(err);
+        res.status(200).json(user);
+      });
+    })(req, res, next);
   });
 
   app.post("/api/logout", (req, res, next) => {

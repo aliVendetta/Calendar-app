@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
 import { Calendar, ChevronLeft, ChevronRight, Plus, User, LogOut } from "lucide-react";
-import DailyView from "@/components/calendar/daily-view";
-import WeeklyView from "@/components/calendar/weekly-view";
-import MonthlyView from "@/components/calendar/monthly-view";
-import EventModal from "@/components/event-modal";
-import { useAuth } from "@/hooks/use-auth";
+import DailyView from "../components/calendar/daily-view";
+import WeeklyView from "../components/calendar/weekly-view";
+import MonthlyView from "../components/calendar/monthly-view";
+import EventModal from "../components/event-modal";
+import { useAuth } from "../hooks/use-auth";
 
 type ViewMode = "daily" | "weekly" | "monthly";
 

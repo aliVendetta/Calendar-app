@@ -1,18 +1,25 @@
 import { useState } from "react";
 import { Redirect } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Calendar, User, Mail, Lock } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "../hooks/use-auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
+const insertUserSchema = z.object({
+  id: z.string(),
+  username: z.string().min(3),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
 const loginSchema = insertUserSchema.pick({ username: true, password: true });
-const registerSchema = insertUserSchema.omit({ id: true });
+const registerSchema = insertUserSchema.omit(['id']);
 
 type LoginFormData = z.infer<typeof loginSchema>;
 type RegisterFormData = z.infer<typeof registerSchema>;

@@ -1,36 +1,70 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cors from 'cors';
+
 
 const app = express();
+// Add this near the top of your Express setup
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+
+
 // CORS configuration for production
-if (process.env.NODE_ENV === "production") {
-  app.use((req, res, next) => {
-    const allowedOrigins = [
-      process.env.FRONTEND_URL,
-      "https://your-calendar-app.vercel.app" // Replace with your actual Vercel domain
-    ].filter(Boolean);
+// if (process.env.NODE_ENV === "production") {
+//   app.use((req, res, next) => {
+//     const allowedOrigins = [
+//       process.env.FRONTEND_URL,
+//       "https://your-calendar-app.vercel.app" // Replace with your actual Vercel domain
+//     ].filter(Boolean);
     
-    const origin = req.headers.origin;
-    if (origin && allowedOrigins.includes(origin)) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
+//     const origin = req.headers.origin;
+//     if (origin && allowedOrigins.includes(origin)) {
+//       res.setHeader('Access-Control-Allow-Origin', origin);
+//     }
     
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//     res.setHeader('Access-Control-Allow-Credentials', 'true');
     
-    if (req.method === 'OPTIONS') {
-      res.sendStatus(200);
-      return;
-    }
+//     if (req.method === 'OPTIONS') {
+//       res.sendStatus(200);
+//       return;
+//     }
     
-    next();
-  });
-}
+//     next();
+//   });
+// }
+
+// Replace your current CORS configuration with this:
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    "http://localhost:5173", // Vite default port
+    "https://your-calendar-app.vercel.app" // Your production domain
+  ].filter(Boolean);
+  
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+  
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -86,12 +120,27 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
+
+
+  // server.listen({
+    //   port,
+    //   host: "127.0.0.1",
+    //   reusePort: true,
+    // }, () => {
+      //   log(`serving on http://127.0.0.1:${port}`);
+      // });
+      
+      
   const port = parseInt(process.env.PORT || '5001', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  const isDev = process.env.NODE_ENV !== 'production';
+
+  server.listen(
+    {
+      port,
+      host: isDev ? '127.0.0.1' : '0.0.0.0',
+    },
+    () => {
+      log(`serving on http://${isDev ? '127.0.0.1' : '0.0.0.0'}:${port}`);
+    }
+  );
 })();
