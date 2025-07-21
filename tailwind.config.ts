@@ -101,6 +101,7 @@ import { type Config } from "tailwindcss";
 
 const config = {
   content: [
+    "./client/src/index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
