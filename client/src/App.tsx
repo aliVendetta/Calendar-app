@@ -8,6 +8,7 @@ import { ProtectedRoute } from "./lib/protected-route";
 import HomePage from "./pages/home-page";
 import AuthPage from "./pages/auth-page";
 import NotFound from "./pages/not-found";
+import React from "react";
 
 function Router() {
   return (

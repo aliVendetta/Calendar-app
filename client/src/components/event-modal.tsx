@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { insertEventSchema, type InsertEvent } from "shared/schema";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
+import { insertEventSchema, type InsertEvent } from "../../../shared/schema";
+import { apiRequest, queryClient } from "../lib/queryClient";
+import { useToast } from "../hooks/use-toast";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -10,17 +10,17 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "../components/ui/dialog";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../components/ui/select";
 
 interface EventModalProps {
   isOpen: boolean;

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Event } from "@shared/schema";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 
 interface MonthlyViewProps {
   currentDate: Date;

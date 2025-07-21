@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Event } from "@shared/schema";
 import { format, startOfDay, endOfDay, addHours } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../../components/ui/skeleton";
 
 interface DailyViewProps {
   currentDate: Date;
